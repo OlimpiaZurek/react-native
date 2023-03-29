@@ -9,7 +9,7 @@
 
 <!-- Explain the **motivation** for making this change. What existing problem does the pull request solve? -->
 
-## Changelog
+## Changelog:
 
 <!-- Help reviewers and the release process by writing your own changelog entry.
 
@@ -21,6 +21,6 @@ For more details, see:
 https://reactnative.dev/contributing/changelogs-in-pull-requests
 -->
 
-## Test Plan
+## Test Plan:
 
 <!-- Demonstrate the code is solid. Example: The exact commands you ran and their output, screenshots / videos if the pull request changes the user interface. -->
