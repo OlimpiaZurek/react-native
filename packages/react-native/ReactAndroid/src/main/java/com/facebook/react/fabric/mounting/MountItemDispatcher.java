@@ -420,9 +420,7 @@ public class MountItemDispatcher {
 
   public interface ItemDispatchListener {
     void willMountItems();
-
     void didMountItems();
-
     void didDispatchMountItems();
   }
 }

@@ -23,6 +23,7 @@
 #import "RCTCustomPullToRefreshViewProtocol.h"
 #import "RCTEnhancedScrollView.h"
 #import "RCTFabricComponentsPlugins.h"
+#import "RCTPullToRefreshViewComponentView.h"
 
 using namespace facebook::react;
 
@@ -346,7 +347,10 @@ static void RCTSendScrollEventForNativeAnimations_DEPRECATED(UIScrollView *scrol
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
   [_containerView insertSubview:childComponentView atIndex:index];
-  if (![childComponentView conformsToProtocol:@protocol(RCTCustomPullToRefreshViewProtocol)]) {
+  if ([childComponentView isKindOfClass:RCTPullToRefreshViewComponentView.class]) {
+    // Ignore the pull to refresh component.
+  } else {
+    RCTAssert(_contentView == nil, @"RCTScrollView may only contain a single subview.");
     _contentView = childComponentView;
   }
 }
@@ -354,8 +358,10 @@ static void RCTSendScrollEventForNativeAnimations_DEPRECATED(UIScrollView *scrol
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
   [childComponentView removeFromSuperview];
-  if (![childComponentView conformsToProtocol:@protocol(RCTCustomPullToRefreshViewProtocol)] &&
-      _contentView == childComponentView) {
+  if ([childComponentView isKindOfClass:RCTPullToRefreshViewComponentView.class]) {
+    // Ignore the pull to refresh component.
+  } else {
+    RCTAssert(_contentView == childComponentView, @"Attempted to remove non-existent subview");
     _contentView = nil;
   }
 }
@@ -417,9 +423,6 @@ static void RCTSendScrollEventForNativeAnimations_DEPRECATED(UIScrollView *scrol
   _shouldUpdateContentInsetAdjustmentBehavior = YES;
   _state.reset();
   _isUserTriggeredScrolling = NO;
-  CGRect oldFrame = self.frame;
-  self.frame = CGRectZero;
-  self.frame = oldFrame;
   _contentView = nil;
   _prevFirstVisibleFrame = CGRectZero;
   _firstVisibleView = nil;

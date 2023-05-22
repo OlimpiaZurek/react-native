@@ -1,6 +1,10 @@
 {
   "name": "@react-native/eslint-plugin-specs",
+<<<<<<< HEAD
   "version": "0.73.0",
+=======
+  "version": "0.70.0",
+>>>>>>> upstreamExpensify/Expensify-0.70.4-alpha.2
   "description": "ESLint rules to validate NativeModule and Component Specs",
   "main": "index.js",
   "repository": {
@@ -12,8 +16,12 @@
     "node": ">=16"
   },
   "scripts": {
+<<<<<<< HEAD
     "prepack": "node prepack.js",
     "postpack": "node postpack.js"
+=======
+    "prepack": "node prepack.js"
+>>>>>>> upstreamExpensify/Expensify-0.70.4-alpha.2
   },
   "dependencies": {
     "@babel/core": "^7.20.0",

@@ -147,32 +147,31 @@ function publishNpm(buildType) {
   }
 }
 
-if (require.main === module) {
-  const argv = yargs
-    .option('n', {
-      alias: 'nightly',
-      type: 'boolean',
-      default: false,
-    })
-    .option('d', {
-      alias: 'dry-run',
-      type: 'boolean',
-      default: false,
-    })
-    .option('r', {
-      alias: 'release',
-      type: 'boolean',
-      default: false,
-    })
-    .strict().argv;
+// Running to see if this commit has been git tagged as `latest`
+const isLatest = isTaggedLatest(currentCommit);
 
-  const buildType = argv.release
-    ? 'release'
-    : argv.nightly
-    ? 'nightly'
-    : 'dry-run';
+const releaseBranch = `${major}.${minor}-stable`;
 
-  publishNpm(buildType);
+// Set the right tag for nightly and prerelease builds
+// If a release is not git-tagged as `latest` we use `releaseBranch` to prevent
+// npm from overriding the current `latest` version tag, which it will do if no tag is set.
+const tagFlag = nightlyBuild
+  ? '--tag nightly'
+  : prerelease != null
+  ? '--tag next'
+  : isLatest
+  ? '--tag latest'
+  : `--tag ${releaseBranch}`;
+
+// use otp from envvars if available
+const otpFlag = otp ? `--otp ${otp}` : '';
+
+if (exec(`npm publish --tag latest`).code) {
+  echo('Failed to publish package to npm');
+  exit(1);
+} else {
+  echo(`Published to npm ${releaseVersion}`);
+  exit(0);
 }
 
 module.exports = publishNpm;

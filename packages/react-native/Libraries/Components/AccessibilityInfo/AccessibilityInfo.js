@@ -18,6 +18,9 @@ import Platform from '../../Utilities/Platform';
 import legacySendAccessibilityEvent from './legacySendAccessibilityEvent';
 import NativeAccessibilityInfoAndroid from './NativeAccessibilityInfo';
 import NativeAccessibilityManagerIOS from './NativeAccessibilityManager';
+import legacySendAccessibilityEvent from './legacySendAccessibilityEvent';
+import type {ElementRef} from 'react';
+import type {AccessibilityInfo as AccessibilityInfoType} from './AccessibilityInfo.flow';
 
 // Events that are only supported on Android.
 type AccessibilityEventDefinitionsAndroid = {
@@ -74,7 +77,7 @@ const EventNames: Map<
  *
  * See https://reactnative.dev/docs/accessibilityinfo
  */
-const AccessibilityInfo = {
+const AccessibilityInfo: AccessibilityInfoType = {
   /**
    * Query whether bold text is currently enabled.
    *

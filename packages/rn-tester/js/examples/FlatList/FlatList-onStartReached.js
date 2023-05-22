@@ -12,25 +12,26 @@
 import type {RNTesterModuleExample} from '../../types/RNTesterTypes';
 import BaseFlatListExample, {ITEM_HEIGHT} from './BaseFlatListExample';
 import * as React from 'react';
-import {FlatList} from 'react-native';
 
 export function FlatList_onStartReached(): React.Node {
   const [output, setOutput] = React.useState('');
   const exampleProps = {
-    onStartReached: (info: {distanceFromStart: number, ...}) =>
-      setOutput('onStartReached'),
+    onStartReached: info => setOutput('onStartReached'),
     onStartReachedThreshold: 0,
     initialScrollIndex: 5,
-    getItemLayout: (data: any, index: number) => ({
+    getItemLayout: (data, index) => ({
       length: ITEM_HEIGHT,
       offset: ITEM_HEIGHT * index,
       index,
     }),
   };
-  const ref = React.useRef<?FlatList<string>>(null);
+  const ref = React.useRef(null);
 
   const onTest = () => {
-    ref.current?.scrollToOffset({offset: 0});
+    const scrollResponder = ref?.current?.getScrollResponder();
+    if (scrollResponder != null) {
+      scrollResponder.scrollTo({y: 0});
+    }
   };
 
   return (
@@ -48,7 +49,7 @@ export default ({
   name: 'onStartReached',
   description:
     'Scroll to start of list or tap Test button to see `onStartReached` triggered.',
-  render: function () {
+  render: function (): React.Element<typeof FlatList_onStartReached> {
     return <FlatList_onStartReached />;
   },
 }: RNTesterModuleExample);

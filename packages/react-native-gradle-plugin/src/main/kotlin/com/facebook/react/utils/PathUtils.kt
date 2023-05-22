@@ -15,7 +15,6 @@ import com.facebook.react.utils.KotlinStdlibCompatUtils.capitalizeCompat
 import com.facebook.react.utils.Os.cliPath
 import java.io.File
 import org.gradle.api.Project
-import org.gradle.api.file.DirectoryProperty
 
 /**
  * Computes the entry file for React Native. The Algo follows this order:
@@ -197,35 +196,12 @@ internal fun projectPathToLibraryName(projectPath: String): String =
  * Gradle module (generally the case for library projects) or we fallback to looking into the `root`
  * folder of a React Native project (generally the case for app projects).
  */
-internal fun findPackageJsonFile(project: Project, rootProperty: DirectoryProperty): File? {
-  val inParent = project.file("../package.json")
-  if (inParent.exists()) {
-    return inParent
-  }
-
-  val fromExtension = rootProperty.file("package.json").orNull?.asFile
-  if (fromExtension?.exists() == true) {
-    return fromExtension
-  }
-
-  return null
-}
-
-/**
- * Function to look for the `package.json` and parse it. It returns a [ModelPackageJson] if found or
- * null others.
- *
- * Please note that this function access the [DirectoryProperty] parameter and calls .get() on them,
- * so calling this during apply() of the ReactPlugin is not recommended. It should be invoked inside
- * lazy lambdas or at execution time.
- */
-internal fun readPackageJsonFile(
-    project: Project,
-    rootProperty: DirectoryProperty
-): ModelPackageJson? {
-  val packageJson = findPackageJsonFile(project, rootProperty)
-  return packageJson?.let { JsonUtils.fromCodegenJson(it) }
-}
+internal fun findPackageJsonFile(project: Project, extension: ReactExtension): File? =
+    if (project.file("../package.json").exists()) {
+      project.file("../package.json")
+    } else {
+      extension.root.file("package.json").orNull?.asFile
+    }
 
 private const val HERMESC_IN_REACT_NATIVE_DIR = "node_modules/react-native/sdks/hermesc/%OS-BIN%/"
 private const val HERMESC_BUILT_FROM_SOURCE_DIR =

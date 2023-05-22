@@ -22,6 +22,8 @@ import type {EventSubscription} from '../../vendor/emitter/EventEmitter';
 import type {KeyboardEvent, KeyboardMetrics} from '../Keyboard/Keyboard';
 import type {ViewProps} from '../View/ViewPropTypes';
 import type {Props as ScrollViewStickyHeaderProps} from './ScrollViewStickyHeader';
+import type {KeyboardEvent, KeyboardMetrics} from '../Keyboard/Keyboard';
+import type {EventSubscription} from '../../vendor/emitter/EventEmitter';
 
 import AnimatedImplementation from '../../Animated/AnimatedImplementation';
 import FrameRateLogger from '../../Interaction/FrameRateLogger';
@@ -1560,7 +1562,7 @@ class ScrollView extends React.Component<Props, State> {
     // when using a physical keyboard. Ensure we have an event for an opened
     // keyboard.
     const softKeyboardMayBeOpen =
-      this._keyboardMetrics != null || this._keyboardEventsAreUnreliable();
+      this._keyboardMetrics != null || Platform.OS === 'android';
 
     return hasFocusedTextInput && softKeyboardMayBeOpen;
   };

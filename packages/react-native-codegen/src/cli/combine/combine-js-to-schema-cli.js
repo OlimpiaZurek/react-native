@@ -16,7 +16,22 @@ const fs = require('fs');
 const glob = require('glob');
 const {parseArgs, filterJSFile} = require('./combine-utils');
 
-const {platform, outfile, fileList} = parseArgs(process.argv);
+const [outfile, ...fileList] = process.argv.slice(2);
+
+function filterJSFile(file: string) {
+  return (
+    /^(Native.+|.+NativeComponent)/.test(path.basename(file)) &&
+    // NativeUIManager will be deprecated by Fabric UIManager.
+    // For now, ignore this spec completely because the types are not fully supported.
+    !file.endsWith('NativeUIManager.js') &&
+    // NativeSampleTurboModule is for demo purpose. It should be added manually to the
+    // app for now.
+    !file.endsWith('NativeSampleTurboModule.js') &&
+    !file.includes('__tests') &&
+    // Ignore TypeScript type declaration files.
+    !file.endsWith('.d.ts')
+  );
+}
 
 const allFiles = [];
 fileList.forEach(file => {

@@ -20,8 +20,6 @@ import com.facebook.react.utils.DependencyUtils.configureDependencies
 import com.facebook.react.utils.DependencyUtils.configureRepositories
 import com.facebook.react.utils.DependencyUtils.readVersionString
 import com.facebook.react.utils.JsonUtils
-import com.facebook.react.utils.NdkConfiguratorUtils.configureReactNativeNdk
-import com.facebook.react.utils.ProjectUtils.needsCodegenFromPackageJson
 import com.facebook.react.utils.findPackageJsonFile
 import java.io.File
 import kotlin.system.exitProcess
@@ -134,47 +132,39 @@ class ReactPlugin : Plugin<Project> {
     val generateCodegenSchemaTask =
         project.tasks.register(
             "generateCodegenSchemaFromJavaScript", GenerateCodegenSchemaTask::class.java) { it ->
-              it.dependsOn(buildCodegenTask)
-              it.nodeExecutableAndArgs.set(rootExtension.nodeExecutableAndArgs)
-              it.codegenDir.set(rootExtension.codegenDir)
-              it.generatedSrcDir.set(generatedSrcDir)
+          it.dependsOn(buildCodegenTask)
+          it.nodeExecutableAndArgs.set(extension.nodeExecutableAndArgs)
+          it.codegenDir.set(extension.codegenDir)
+          it.generatedSrcDir.set(generatedSrcDir)
 
-              // We're reading the package.json at configuration time to properly feed
-              // the `jsRootDir` @Input property of this task & the onlyIf. Therefore, the
-              // parsePackageJson should be invoked inside this lambda.
-              val packageJson = findPackageJsonFile(project, rootExtension.root)
-              val parsedPackageJson = packageJson?.let { JsonUtils.fromCodegenJson(it) }
+          // We're reading the package.json at configuration time to properly feed
+          // the `jsRootDir` @Input property of this task. Therefore, the
+          // parsePackageJson should be invoked inside this lambda.
+          val packageJson = findPackageJsonFile(project, extension)
+          val parsedPackageJson = packageJson?.let { JsonUtils.fromCodegenJson(it) }
 
-              val jsSrcsDirInPackageJson = parsedPackageJson?.codegenConfig?.jsSrcsDir
-              if (jsSrcsDirInPackageJson != null) {
-                it.jsRootDir.set(File(packageJson.parentFile, jsSrcsDirInPackageJson))
-              } else {
-                it.jsRootDir.set(localExtension.jsRootDir)
-              }
-              val needsCodegenFromPackageJson =
-                  project.needsCodegenFromPackageJson(rootExtension.root)
-              it.onlyIf { isLibrary || needsCodegenFromPackageJson }
-            }
+          val jsSrcsDirInPackageJson = parsedPackageJson?.codegenConfig?.jsSrcsDir
+          if (jsSrcsDirInPackageJson != null) {
+            it.jsRootDir.set(File(packageJson.parentFile, jsSrcsDirInPackageJson))
+          } else {
+            it.jsRootDir.set(extension.jsRootDir)
+          }
+        }
 
     // We create the task to generate Java code from schema.
     val generateCodegenArtifactsTask =
         project.tasks.register(
             "generateCodegenArtifactsFromSchema", GenerateCodegenArtifactsTask::class.java) {
-              it.dependsOn(generateCodegenSchemaTask)
-              it.reactNativeDir.set(rootExtension.reactNativeDir)
-              it.nodeExecutableAndArgs.set(rootExtension.nodeExecutableAndArgs)
-              it.generatedSrcDir.set(generatedSrcDir)
-              it.packageJsonFile.set(findPackageJsonFile(project, rootExtension.root))
-              it.codegenJavaPackageName.set(localExtension.codegenJavaPackageName)
-              it.libraryName.set(localExtension.libraryName)
-
-              // Please note that appNeedsCodegen is triggering a read of the package.json at
-              // configuration time as we need to feed the onlyIf condition of this task.
-              // Therefore, the appNeedsCodegen needs to be invoked inside this lambda.
-              val needsCodegenFromPackageJson =
-                  project.needsCodegenFromPackageJson(rootExtension.root)
-              it.onlyIf { isLibrary || needsCodegenFromPackageJson }
-            }
+          it.dependsOn(generateCodegenSchemaTask)
+          it.reactNativeDir.set(extension.reactNativeDir)
+          it.deprecatedReactRoot.set(extension.reactRoot)
+          it.nodeExecutableAndArgs.set(extension.nodeExecutableAndArgs)
+          it.codegenDir.set(extension.codegenDir)
+          it.generatedSrcDir.set(generatedSrcDir)
+          it.packageJsonFile.set(findPackageJsonFile(project, extension))
+          it.codegenJavaPackageName.set(extension.codegenJavaPackageName)
+          it.libraryName.set(extension.libraryName)
+        }
 
     // We update the android configuration to include the generated sources.
     // This equivalent to this DSL:

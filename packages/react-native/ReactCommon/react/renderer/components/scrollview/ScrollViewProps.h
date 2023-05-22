@@ -13,7 +13,8 @@
 
 #include <optional>
 
-namespace facebook::react {
+namespace facebook {
+namespace react {
 
 // TODO (T28334063): Consider for codegen.
 class ScrollViewProps final : public ViewProps {
@@ -44,8 +45,7 @@ class ScrollViewProps final : public ViewProps {
   bool directionalLockEnabled{};
   ScrollViewIndicatorStyle indicatorStyle{};
   ScrollViewKeyboardDismissMode keyboardDismissMode{};
-  std::optional<ScrollViewMaintainVisibleContentPosition>
-      maintainVisibleContentPosition{};
+  std::optional<ScrollViewMaintainVisibleContentPosition> maintainVisibleContentPosition{};
   Float maximumZoomScale{1.0f};
   Float minimumZoomScale{1.0f};
   bool scrollEnabled{true};

@@ -229,14 +229,14 @@ class PathUtilsTest {
   }
 
   @Test
-  @WithOs(OS.LINUX)
-  fun getHermesCBin_onLinux_returnsHermesc() {
+  @WithOs(OS.UNIX)
+  fun getHermesCBin_onUnix_returnsHermesc() {
     assertEquals("hermesc", getHermesCBin())
   }
 
   @Test
   @WithOs(OS.MAC)
-  fun getHermesCBin_onMac_returnsHermesc() {
+  fun getHermesCBin_onMax_returnsHermesc() {
     assertEquals("hermesc", getHermesCBin())
   }
 
@@ -246,11 +246,10 @@ class PathUtilsTest {
     val moduleFolder = tempFolder.newFolder("awesome-module")
 
     val project = ProjectBuilder.builder().withProjectDir(moduleFolder).build()
-    project.plugins.apply("com.android.library")
     project.plugins.apply("com.facebook.react")
     val extension = project.extensions.getByType(ReactExtension::class.java)
 
-    assertEquals(project.file("../package.json"), findPackageJsonFile(project, extension.root))
+    assertEquals(project.file("../package.json"), findPackageJsonFile(project, extension))
   }
 
   @Test
@@ -259,67 +258,10 @@ class PathUtilsTest {
     val localFile = File(moduleFolder, "package.json").apply { writeText("{}") }
 
     val project = ProjectBuilder.builder().withProjectDir(moduleFolder).build()
-    project.plugins.apply("com.android.library")
     project.plugins.apply("com.facebook.react")
     val extension =
         project.extensions.getByType(ReactExtension::class.java).apply { root.set(moduleFolder) }
 
-    assertEquals(localFile, findPackageJsonFile(project, extension.root))
-  }
-
-  @Test
-  fun readPackageJsonFile_withMissingFile_returnsNull() {
-    val moduleFolder = tempFolder.newFolder("awesome-module")
-    val project = ProjectBuilder.builder().withProjectDir(moduleFolder).build()
-    project.plugins.apply("com.android.library")
-    project.plugins.apply("com.facebook.react")
-    val extension =
-        project.extensions.getByType(ReactExtension::class.java).apply { root.set(moduleFolder) }
-
-    val actual = readPackageJsonFile(project, extension.root)
-
-    assertNull(actual)
-  }
-
-  @Test
-  fun readPackageJsonFile_withFileConfiguredInExtension_andMissingCodegenConfig_returnsNullCodegenConfig() {
-    val moduleFolder = tempFolder.newFolder("awesome-module")
-    File(moduleFolder, "package.json").apply { writeText("{}") }
-    val project = ProjectBuilder.builder().withProjectDir(moduleFolder).build()
-    project.plugins.apply("com.android.library")
-    project.plugins.apply("com.facebook.react")
-    val extension =
-        project.extensions.getByType(ReactExtension::class.java).apply { root.set(moduleFolder) }
-
-    val actual = readPackageJsonFile(project, extension.root)
-
-    assertNotNull(actual)
-    assertNull(actual!!.codegenConfig)
-  }
-
-  @Test
-  fun readPackageJsonFile_withFileConfiguredInExtension_andHavingCodegenConfig_returnsValidCodegenConfig() {
-    val moduleFolder = tempFolder.newFolder("awesome-module")
-    File(moduleFolder, "package.json").apply {
-      writeText(
-          // language=json
-          """
-      {
-        "name": "a-library",
-        "codegenConfig": {}
-      }
-      """
-              .trimIndent())
-    }
-    val project = ProjectBuilder.builder().withProjectDir(moduleFolder).build()
-    project.plugins.apply("com.android.library")
-    project.plugins.apply("com.facebook.react")
-    val extension =
-        project.extensions.getByType(ReactExtension::class.java).apply { root.set(moduleFolder) }
-
-    val actual = readPackageJsonFile(project, extension.root)
-
-    assertNotNull(actual)
-    assertNotNull(actual!!.codegenConfig)
+    assertEquals(localFile, findPackageJsonFile(project, extension))
   }
 }

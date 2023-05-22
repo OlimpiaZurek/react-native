@@ -99,6 +99,9 @@ class FlatListExample extends React.PureComponent<Props, State> {
     fadingEdgeLength: 0,
     onPressDisabled: false,
     textSelectable: true,
+    maintainVisibleContentPosition: true,
+    previousLoading: false,
+    nextLoading: false,
     isRTL: IS_RTL,
     maintainVisibleContentPosition: true,
     previousLoading: false,
@@ -287,7 +290,7 @@ class FlatListExample extends React.PureComponent<Props, State> {
             viewabilityConfig={VIEWABILITY_CONFIG}
             maintainVisibleContentPosition={
               this.state.maintainVisibleContentPosition
-                ? {minIndexForVisible: 0}
+                ? {minIndexForVisible: 2}
                 : undefined
             }
             {...flatListItemRendererProps}
@@ -392,7 +395,7 @@ class FlatListExample extends React.PureComponent<Props, State> {
   };
 
   _pressItem = (key: string) => {
-    this._listRef?.recordInteraction();
+    this._listRef && this._listRef.recordInteraction();
     const index = this.state.data.findIndex(item => item.key === key);
     const itemState = pressItem(this.state.data[index]);
     this.setState(state => ({

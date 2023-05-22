@@ -15,15 +15,7 @@ import type {
   ViewProps,
 } from '../View/ViewPropTypes';
 import type {KeyboardEvent, KeyboardMetrics} from './Keyboard';
-
-import LayoutAnimation from '../../LayoutAnimation/LayoutAnimation';
-import StyleSheet from '../../StyleSheet/StyleSheet';
-import Platform from '../../Utilities/Platform';
-import {type EventSubscription} from '../../vendor/emitter/EventEmitter';
 import AccessibilityInfo from '../AccessibilityInfo/AccessibilityInfo';
-import View from '../View/View';
-import Keyboard from './Keyboard';
-import * as React from 'react';
 
 type Props = $ReadOnly<{|
   ...ViewProps,
@@ -112,15 +104,23 @@ class KeyboardAvoidingView extends React.Component<Props, State> {
   };
 
   _onLayout = async (event: ViewLayoutEvent) => {
+<<<<<<< HEAD:packages/react-native/Libraries/Components/Keyboard/KeyboardAvoidingView.js
     const oldFrame = this._frame;
+=======
+    const wasFrameNull = this._frame == null;
+>>>>>>> upstreamExpensify/Expensify-0.70.4-alpha.2:Libraries/Components/Keyboard/KeyboardAvoidingView.js
     this._frame = event.nativeEvent.layout;
     if (!this._initialFrameHeight) {
       // save the initial frame height, before the keyboard is visible
       this._initialFrameHeight = this._frame.height;
     }
 
+<<<<<<< HEAD:packages/react-native/Libraries/Components/Keyboard/KeyboardAvoidingView.js
     // update bottom height for the first time or when the height is changed
     if (!oldFrame || oldFrame.height !== this._frame.height) {
+=======
+    if (wasFrameNull) {
+>>>>>>> upstreamExpensify/Expensify-0.70.4-alpha.2:Libraries/Components/Keyboard/KeyboardAvoidingView.js
       await this._updateBottomIfNecessary();
     }
 

@@ -43,9 +43,26 @@ function resolveTypeAnnotation(
   };
 
   for (;;) {
-    const topLevelType = parseTopLevelType(node);
-    nullable = nullable || topLevelType.optional;
-    node = topLevelType.type;
+    // Check for optional type in union e.g. T | null | undefined
+    if (
+      node.type === 'TSUnionType' &&
+      node.types.some(
+        t => t.type === 'TSNullKeyword' || t.type === 'TSUndefinedKeyword',
+      )
+    ) {
+      node = node.types.filter(
+        t => t.type !== 'TSNullKeyword' && t.type !== 'TSUndefinedKeyword',
+      )[0];
+      nullable = true;
+    } else if (node.type === 'TSTypeReference') {
+      typeAliasResolutionStatus = {
+        successful: true,
+        aliasName: node.typeName.name,
+      };
+      const resolvedTypeAnnotation = types[node.typeName.name];
+      if (resolvedTypeAnnotation == null) {
+        break;
+      }
 
     if (node.type !== 'TSTypeReference') {
       break;

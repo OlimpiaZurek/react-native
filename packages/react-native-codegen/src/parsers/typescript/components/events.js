@@ -89,6 +89,24 @@ function getPropertyType(
         },
       };
     case 'TSUnionType':
+      // Check for <T | null | undefined>
+      if (
+        typeAnnotation.types.some(
+          t => t.type === 'TSNullKeyword' || t.type === 'TSUndefinedKeyword',
+        )
+      ) {
+        const optionalType = typeAnnotation.types.filter(
+          t => t.type !== 'TSNullKeyword' && t.type !== 'TSUndefinedKeyword',
+        )[0];
+
+        // Check for <(T | T2) | null | undefined>
+        if (optionalType.type === 'TSParenthesizedType') {
+          return getPropertyType(name, true, optionalType.typeAnnotation);
+        }
+
+        return getPropertyType(name, true, optionalType);
+      }
+
       return {
         name,
         optional,
@@ -218,13 +236,32 @@ type EventTypeAST = Object;
 function buildEventSchema(
   types: TypeDeclarationMap,
   property: EventTypeAST,
-  parser: Parser,
-): EventTypeShape {
-  // unpack WithDefault, (T) or T|U
-  const topLevelType = parseTopLevelType(
-    property.typeAnnotation.typeAnnotation,
-    types,
-  );
+): ?EventTypeShape {
+  const name = property.key.name;
+
+  let optional = property.optional || false;
+  let typeAnnotation = property.typeAnnotation.typeAnnotation;
+
+  // Check for T | null | undefined
+  if (
+    typeAnnotation.type === 'TSUnionType' &&
+    typeAnnotation.types.some(
+      t => t.type === 'TSNullKeyword' || t.type === 'TSUndefinedKeyword',
+    )
+  ) {
+    typeAnnotation = typeAnnotation.types.filter(
+      t => t.type !== 'TSNullKeyword' && t.type !== 'TSUndefinedKeyword',
+    )[0];
+    optional = true;
+  }
+
+  if (
+    typeAnnotation.type !== 'TSTypeReference' ||
+    (typeAnnotation.typeName.name !== 'BubblingEventHandler' &&
+      typeAnnotation.typeName.name !== 'DirectEventHandler')
+  ) {
+    return null;
+  }
 
   const name = property.key.name;
   const typeAnnotation = topLevelType.type;
