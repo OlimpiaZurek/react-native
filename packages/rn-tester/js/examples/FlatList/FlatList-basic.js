@@ -12,7 +12,7 @@
 
 import type {AnimatedComponentType} from 'react-native/Libraries/Animated/createAnimatedComponent';
 import typeof FlatListType from 'react-native/Libraries/Lists/FlatList';
-import type {RenderItemProps} from 'react-native/Libraries/Lists/VirtualizedListProps';
+import type {RenderItemProps} from 'react-native/Libraries/Lists/VirtualizedList';
 
 import type {RNTesterModuleExample} from '../../types/RNTesterTypes';
 import * as React from 'react';
@@ -259,6 +259,7 @@ class FlatListExample extends React.PureComponent<Props, State> {
               this.state.nextLoading ? LoadingComponent : FooterComponent
             }
             ListEmptyComponent={ListEmptyComponent}
+            // $FlowFixMe[missing-empty-array-annot]
             data={this.state.empty ? [] : filteredData}
             debug={this.state.debug}
             disableVirtualization={!this.state.virtualized}

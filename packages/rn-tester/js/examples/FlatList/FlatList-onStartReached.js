@@ -12,6 +12,7 @@
 import type {RNTesterModuleExample} from '../../types/RNTesterTypes';
 import BaseFlatListExample, {ITEM_HEIGHT} from './BaseFlatListExample';
 import * as React from 'react';
+import {FlatList} from 'react-native';
 
 export function FlatList_onStartReached(): React.Node {
   const [output, setOutput] = React.useState('');
@@ -26,13 +27,10 @@ export function FlatList_onStartReached(): React.Node {
       index,
     }),
   };
-  const ref = React.useRef(null);
+  const ref = React.useRef<?FlatList<string>>(null);
 
   const onTest = () => {
-    const scrollResponder = ref?.current?.getScrollResponder();
-    if (scrollResponder != null) {
-      scrollResponder.scrollTo({y: 0});
-    }
+    ref.current?.scrollToOffset({offset: 0});
   };
 
   return (

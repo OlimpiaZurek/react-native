@@ -10,30 +10,11 @@
 'use strict';
 
 const {exec, echo, exit, test, env, pushd, popd} = require('shelljs');
-const {saveFiles} = require('./scm-utils');
-const {createHermesPrebuiltArtifactsTarball} = require('./hermes/hermes-utils');
+const {
+  createHermesPrebuiltArtifactsTarball,
+} = require('../packages/react-native/scripts/hermes/hermes-utils');
 
-// TODO: we should probably remove this because of this? https://github.com/facebook/react-native/pull/34846
-function saveFilesToRestore(tmpPublishingFolder) {
-  const filesToSaveAndRestore = [
-    'template/Gemfile',
-    'template/_ruby-version',
-    'template/package.json',
-    '.ruby-version',
-    'Gemfile.lock',
-    'Gemfile',
-    'package.json',
-    'ReactAndroid/gradle.properties',
-    'Libraries/Core/ReactNativeVersion.js',
-    'React/Base/RCTVersion.m',
-    'ReactAndroid/src/main/java/com/facebook/react/modules/systeminfo/ReactNativeVersion.java',
-    'ReactCommon/cxxreact/ReactNativeVersion.h',
-  ];
-
-  saveFiles(filesToSaveAndRestore, tmpPublishingFolder);
-}
-
-function generateAndroidArtifacts(releaseVersion, tmpPublishingFolder) {
+function generateAndroidArtifacts(releaseVersion) {
   // -------- Generating Android Artifacts
   echo('Generating Android artifacts inside /tmp/maven-local');
   if (exec('./gradlew publishAllToMavenTempLocal').code) {
@@ -83,8 +64,7 @@ function publishAndroidArtifactsToMaven(releaseVersion, isNightly) {
     // -------- For stable releases, we also need to close and release the staging repository.
     if (
       exec(
-        './gradlew publishAllToSonatype closeAndReleaseSonatypeStagingRepository -PisNightly=' +
-          isNightly,
+        './gradlew publishAllToSonatype closeAndReleaseSonatypeStagingRepository',
       ).code
     ) {
       echo(
@@ -165,6 +145,5 @@ module.exports = {
   generateAndroidArtifacts,
   generateiOSArtifacts,
   publishAndroidArtifactsToMaven,
-  saveFilesToRestore,
   failIfTagExists,
 };

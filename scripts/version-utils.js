@@ -66,11 +66,7 @@ function parseVersion(versionStr, buildType) {
 }
 
 function validateBuildType(buildType) {
-  const validBuildTypes = new Set([
-    'release',
-    'dry-run',
-    'nightly',
-  ]);
+  const validBuildTypes = new Set(['release', 'dry-run', 'nightly']);
   if (!validBuildTypes.has(buildType)) {
     throw new Error(`Unsupported build type: ${buildType}`);
   }
@@ -108,11 +104,9 @@ function validateRelease(version) {
 }
 
 function validateDryRun(version) {
-  const isNightly = isNightlyBuild(version) && version.prerelease != null;
-
   if (
     !isMain(version) &&
-    !isNightly &&
+    !isNightlyBuild(version) &&
     !isStableRelease(version) &&
     !isStablePrerelease(version)
   ) {
@@ -122,9 +116,7 @@ function validateDryRun(version) {
 
 function validateNightly(version) {
   // a valid nightly is a prerelease
-  const isPrerelease = version.prerelease != null;
-  const isValidNightly = isNightlyBuild(version) && isPrerelease;
-  if (!isValidNightly) {
+  if (!isNightlyBuild(version)) {
     throw new Error(`Version ${version.version} is not valid for nightlies`);
   }
 }

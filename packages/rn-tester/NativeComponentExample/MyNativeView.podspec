@@ -19,7 +19,7 @@ Pod::Spec.new do |s|
   s.license         = "MIT"
   s.platforms       = { :ios => "12.4" }
   s.compiler_flags  = boost_compiler_flags + ' -Wno-nullability-completeness'
-  s.author          = "Facebook, Inc. and its affiliates"
+  s.author          = "Meta Platforms, Inc. and its affiliates"
   s.source          = { :git => "https://github.com/facebook/my-native-view.git", :tag => "#{s.version}" }
   s.pod_target_xcconfig    = {
     "HEADER_SEARCH_PATHS" => "\"$(PODS_ROOT)/RCT-Folly\" \"$(PODS_ROOT)/boost\" \"${PODS_CONFIGURATION_BUILD_DIR}/React-Codegen/React_Codegen.framework/Headers\"",
@@ -34,7 +34,7 @@ Pod::Spec.new do |s|
   # Enable codegen for this library
   use_react_native_codegen!(s, {
     :library_name => "MyNativeViewSpec",
-    :react_native_path => "../../../",
+    :react_native_path => "../../react-native",
     :js_srcs_dir => "./js",
     :library_type => "components"
   })
