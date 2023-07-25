@@ -13,7 +13,7 @@
 #import <React/RCTBackedTextInputDelegateAdapter.h>
 #import <React/RCTTextAttributes.h>
 
-//the UITextSelectionRect subclass needs to be created because the original version is not writable
+// the UITextSelectionRect subclass needs to be created because the original version is not writable
 @interface CustomTextSelectionRect : UITextSelectionRect
 
 @property (nonatomic) CGRect _rect;

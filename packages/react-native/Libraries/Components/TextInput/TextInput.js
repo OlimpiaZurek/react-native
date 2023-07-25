@@ -376,6 +376,7 @@ type IOSProps = $ReadOnly<{|
    * @platform ios
    */
   smartInsertDelete?: ?boolean,
+
   /**
    * Allows to adjust caret height.
    * The default value is 0, which means the height of the caret will be calculated automatically
